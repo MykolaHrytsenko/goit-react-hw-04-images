@@ -45,15 +45,16 @@ export function App() {
     setCurrentLargeImageURL('');
   };
 
-  const onFormSubmit = query => {
-    if (query.trim().length === 0) {
+  const onFormSubmit = newQuery => {
+    if (newQuery.trim().length === 0) {
       alert('Please, enter request');
       return;
     }
-
-    setQuery(query);
-    setPage(1);
-    setItems([]);
+    if (query !== newQuery) {
+      setPage(1);
+      setItems([]);
+      setQuery(newQuery);
+    }
   };
 
   const onLoadMoreButton = () => {
