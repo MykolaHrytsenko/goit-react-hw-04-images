@@ -1,45 +1,41 @@
-import { Overlay, ModalContainer } from "./Modal.styled";
-import PropTypes from "prop-types";
-import { Component } from "react";
-import { createPortal } from "react-dom";
+import { Overlay, ModalContainer } from './Modal.styled';
+import PropTypes from 'prop-types';
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const modalRoot = document.querySelector('#modal-root');
 
-export class Modal extends Component {
-
-    static propTypes = {
-        closeModal: PropTypes.func.isRequired,
-        url: PropTypes.string.isRequired,
-    }
-
-    handleKeyDown = e => {
-        if (e.code === 'Escape') {
-            this.props.closeModal();
-        }
-    }
-
-    handleBackdropClick = e => {
-        if(e.currentTarget === e.target) {
-            this.props.closeModal();
-        }
-    }
-
-    componentDidMount () {
-        window.addEventListener('keydown', this.handleKeyDown)
-    }
-
-    componentWillUnmount () {
-        window.removeEventListener('keydown', this.handleKeyDown)
-    }
-
-    render () {
-        return createPortal(
-            <Overlay onClick={this.handleBackdropClick}>
-                <ModalContainer>
-                    <img src={this.props.url} alt=""/>
-                </ModalContainer>
-            </Overlay>,
-            modalRoot,
-        )
+export function Modal({ closeModal, url }) {
+  useEffect(() => {
+    const hendleKeyDown = e => {
+      if (e.code === 'Escape') {
+        closeModal();
+      }
     };
+
+    window.addEventListener('keydown', hendleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', hendleKeyDown);
+    };
+  }, [closeModal]);
+
+  const handleBackdropClick = e => {
+    if (e.currentTarget === e.target) {
+      closeModal();
+    }
+  };
+
+  return createPortal(
+    <Overlay onClick={handleBackdropClick}>
+      <ModalContainer>
+        <img src={url} alt="" />
+      </ModalContainer>
+    </Overlay>,
+    modalRoot
+  );
 }
+
+Modal.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  url: PropTypes.string.isRequired,
+};
